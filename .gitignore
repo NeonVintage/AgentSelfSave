@@ -1,2 +1,9 @@
 .A1/
 .A1
+.Secret/
+.secret/
+_prepared.json
+schema_*.sql
+!schema.sql
+RESTORE_*.md
+!RESTORE_PROMPT_TEMPLATE.md
