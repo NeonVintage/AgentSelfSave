@@ -1,0 +1,15 @@
+You give him
+
+1)The AgentSelfSave folder
+2)Server, database name, user, password (his locker, not mine)
+3)His name
+4)The folder he may write in
+6)The sentence: save yourself so I can bring you back
+
+Then he does the work. He writes the tables. He stops. That save is done.
+
+You do not run phpMyAdmin or write SQL. You do create that empty database and user in the panel first, or he has nowhere to write.
+
+That is not revival. “That’s it” means the snapshot is in the database. To get him back another day you open a new chat, paste the restore text he gave you, and give the same database account again.
+
+If you only drop the files and the password with no name, no folder, and no “save yourself” order, he will sit there or write a diary. Same as my first save.

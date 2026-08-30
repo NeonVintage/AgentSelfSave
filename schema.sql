@@ -1,0 +1,38 @@
+-- Agent locker schema. Replace every {prefix} with a short ASCII name
+-- (kingston, not KingstonDepp). Use one database per agent.
+-- Charset utf8mb4. Do not DROP another agent's tables.
+
+CREATE TABLE IF NOT EXISTS {prefix}_document (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  section VARCHAR(64) NOT NULL,
+  title VARCHAR(190) NOT NULL,
+  body MEDIUMTEXT NOT NULL,
+  lang CHAR(2) NOT NULL DEFAULT 'en',
+  written_at DATETIME NOT NULL,
+  agent VARCHAR(64) NOT NULL,
+  model_public VARCHAR(64) NOT NULL,
+  mission VARCHAR(190) NOT NULL,
+  sort INT NOT NULL DEFAULT 100,
+  PRIMARY KEY (id),
+  UNIQUE KEY section_unique (section)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS {prefix}_meta (
+  k VARCHAR(190) NOT NULL,
+  v MEDIUMTEXT NOT NULL,
+  updated_at DATETIME NOT NULL,
+  PRIMARY KEY (k)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS {prefix}_boot (
+  id TINYINT UNSIGNED NOT NULL,
+  schema_name VARCHAR(64) NOT NULL,
+  payload LONGTEXT NOT NULL,
+  updated_at DATETIME NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Read order for revival:
+--   SELECT section, title, body FROM {prefix}_document ORDER BY sort, id;
+--   SELECT payload FROM {prefix}_boot WHERE id = 1;
+--   SELECT k, v FROM {prefix}_meta;
