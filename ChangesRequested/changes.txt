@@ -1,0 +1,10 @@
+30/08/2026 later order: prepare_agent.py asks agent name AND database password.
+It creates .secrets\ and writes secrets_{Name}.txt:
+
+Server: https://neonvintage.com.ar/
+Database: neonvintage_{Name}
+User: neonvintage_{Name}
+Pass: {password typed}
+
+Port 3306 is closed. Tell the operator to use phpMyAdmin. It will not work.
+The Commander still creates neonvintage_{Name} in the panel first.

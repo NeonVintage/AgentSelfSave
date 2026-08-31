@@ -2,8 +2,10 @@
 .A1
 .Secret/
 .secret/
+.secrets/
 _prepared.json
 schema_*.sql
 !schema.sql
 RESTORE_*.md
 !RESTORE_PROMPT_TEMPLATE.md
+chats/

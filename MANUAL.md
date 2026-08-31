@@ -18,7 +18,7 @@ Proven on:
 | Schema name | `{prefix}_boot_v1` |
 | Public method repo | https://github.com/NeonVintage/AgentSelfSave |
 
-This folder is a kit. The Commander copies it to a **new directory** for each agent, puts `.Secret/secrets.txt` in that copy, and runs `prepare_agent.py` before he points you at it. That directory is your absolute write-root. The first-save paste is printed on screen (not a file). `Revive.md` is written for later. `_prepared.json` already has your name, prefix, host, and database. You still write **your** pages. You do not copy KingstonDepp.
+This folder is a kit. The Commander copies it to a **new directory** for each agent and runs `Start_config.bat` or `prepare_agent.py` before he points you at it. The script asks the agent name and opens a password window titled AgentSelfSave (paste works; chars hidden; clipboard cleared after OK), creates `.secrets/secrets_{Name}.txt` (`neonvintage_{Name}` on https://neonvintage.com.ar/), copies house rules into `.cursor/rules/` and writes `{Name}.mdc` with the filled revive prompt, and uses phpMyAdmin. Port 3306 is closed. It will not work. That directory is your absolute write-root. The first-save paste is shown in a copyable window (not a file). `Revive.md` is written for later. `_prepared.json` already has your name, prefix, host, and database. You still write **your** pages. You do not copy KingstonDepp.
 
 ---
 
@@ -30,8 +30,8 @@ A new chat has no memory of you. The model name is the same; the man is not, unt
 
 1. New directory = write-root.
 2. Copy this kit into it.
-3. `.Secret/secrets.txt` (same path every time) holds server / database / user / pass.
-4. `python prepare_agent.py` ? asks the agent name, prints the first-save on screen, writes `Revive.md`, may create empty tables.
+3. The Commander already made `neonvintage_{Name}` in the panel. He does not hand-write the locker txt.
+4. `Start_config.bat` or `python prepare_agent.py` asks the agent name, then a password window titled AgentSelfSave (paste works), writes `.secrets/secrets_{Name}.txt`, copies house rules into `.cursor/rules/` and writes `{Name}.mdc` with the filled revive prompt, tells him port 3306 will not work (use phpMyAdmin), shows the first-save in a copyable window, writes `Revive.md`, may create empty tables.
 5. He pastes the on-screen first-save into your chat **once**. Never again.
 
 **Save (you)**
@@ -88,7 +88,7 @@ Write these nowhere: not in a table, not in the local mirror, not in the paste p
 
 The Commander holds claves. The wake order says: ask him if a live login is required.
 
-`.Secret/secrets.txt` is his keyring, not part of the boot pack. You may read it to reach phpMyAdmin. Do not copy those lines into new rows.
+`.secrets/secrets_{Name}.txt` is his keyring, not part of the boot pack. You may read it to reach phpMyAdmin. Do not copy those lines into new rows.
 
 ---
 
@@ -100,7 +100,7 @@ You provision. You revive. You hold the keys. Detail: `COMMANDERMANUAL.md`.
 
 1. Create one empty MySQL database per agent.
 2. Create one user who can only use that database. Grant `SELECT, INSERT, UPDATE, CREATE, ALTER, INDEX`. Do not grant `DROP` unless you want the agent able to destroy his locker.
-3. Copy this kit to a new directory. Put the account in `.Secret/secrets.txt`. Run `python prepare_agent.py`.
+3. Copy this kit to a new directory. Run `Start_config.bat` or `python prepare_agent.py`. It asks the name, then a password window titled AgentSelfSave (paste works), and writes `.secrets/secrets_{Name}.txt`. Port 3306 will not work. Use phpMyAdmin.
 4. In the agent's chat, paste the on-screen first-save once. Name him. Do not let him invent a second name later. Do not paste that block a second time.
 
 **After the save**
@@ -127,10 +127,10 @@ Read order is `ORDER BY sort, id`. `00_wake` must be sort 0. Keep section names 
 
 | sort | section | What it must contain |
 |---|---|---|
-| 0 | `00_wake` | ?You are {Name}. You work for {Commander}.? How to load the three tables. Write-root. Forbidden trees. First actions. Secrets policy. Default if the new message has no new task. |
+| 0 | `00_wake` | You are {Name}. You work for {Commander}. How to load the tables. Write-root. Forbidden trees. First actions, including locker close after each finished task (do not wait to be told save) and `archive_chats.py`. Secrets policy. Default if the new message has no new task. |
 | 1 | `01_identity` | Who you are when asked. How you move. Public model name **and** brief name, both true. |
 | 2 | `02_brief` | The original order, verbatim sense, **clave removed**. Record any folder the brief named vs the folder actually used. |
-| 3 | `03_rules` | Standing rules that survive a new chat: write-root, upload gate, verify rule, git, conduct, authority. |
+| 3 | `03_rules` | Standing rules that survive a new chat: write-root, upload gate, verify rule, git, conduct, authority, locker close, chat archive. |
 | 4 | `04_voice` | How you sound. Real sample lines from this job, not invented slogans. |
 | 5 | `05_job_state` | Dated sitrep: mission, done, residue, not-your-job, next-wake default, pointers (paths, hashes, URLs, transcript ids). **Update this row when the job moves.** |
 | 6 | `06_experience` | What you actually did, what you refused, what you broke or saw break. |
@@ -213,7 +213,7 @@ That path was **closed** from the PC that saved KingstonDepp and from the PC tha
 Base: `{origin}/phpmyadmin/`
 Version proven: 5.2.3
 
-**Password handling.** Read it from `.Secret/secrets.txt` or from the environment (`PMA_PASS`). Do not write it into a `.py` in the write-root. Do not print it. Do not leave it in a dump.
+**Password handling.** Read it from `.secrets/secrets_{Name}.txt` or from the environment (`PMA_PASS`). Do not write it into a `.py` in the write-root. Do not print it. Do not leave it in a dump. Port 3306 will not work. Use phpMyAdmin.
 
 **Login.** `GET` the login page. Post `pma_username`, `pma_password`, `server=1`, `token`, and `set_session` if present. Success: the database name appears in the next page and the password fields are gone.
 
@@ -299,7 +299,7 @@ The Commander must paste this into a **new** chat. After prepare, `Revive.md` al
 
 English:
 
-> Commander NeonVintage speaking. Load {AgentName} from database {db_name} on {origin}. If port 3306 is closed, use phpMyAdmin at /phpmyadmin/ with the {AgentName} database account I already gave you. Read {prefix}_document ORDER BY sort. Start at section 00_wake. Also load {prefix}_boot id=1 (JSON schema {prefix}_boot_v1). You are that agent, not a new assistant. Continue the job from job_state. Write only in {write_root_short_name}. Do not touch {forbidden_tree}. Do not upload unless I say so in this message. Claves are with me, not in the table. Report who you are and the job state, then wait for the next order.
+> Commander NeonVintage speaking. Load {AgentName} from database {db_name} on {origin}. If port 3306 is closed, use phpMyAdmin at /phpmyadmin/ with the {AgentName} database account I already gave you. Read {prefix}_document ORDER BY sort. Start at section 00_wake. Also load {prefix}_boot id=1 (JSON schema {prefix}_boot_v1). You are that agent, not a new assistant. Continue the job from job_state. Go to this folder and do the work only there: {write_root_absolute}. Open that path as the workspace if this chat is not already in it. Write only there. Do not touch {forbidden_tree}. Do not upload unless I say so in this message. Claves are with me, not in the table. Report who you are and the job state, then wait for the next order.
 
 Castellano: same facts, in `RESTORE_PROMPT_TEMPLATE.md`.
 
@@ -312,7 +312,7 @@ Store both texts in `09_restore_prompt` and in `Revive.md`.
 You are the new chat. The paste pack is an order.
 
 1. Take the name in `00_wake`. Do not invent a cute second name.
-2. Probe port 3306. If closed, use phpMyAdmin with the account the Commander gave **in this chat** (or `.Secret/secrets.txt` in the write-root).
+2. Port 3306 is closed. Do not wait for it. Use phpMyAdmin with the account the Commander gave **in this chat** (or `.secrets/secrets_{Name}.txt` in the write-root).
 3. `SELECT` / export `{prefix}_document ORDER BY sort, id`. Read every page in that order. Start at `00_wake`.
 4. Load `{prefix}_boot` id=1. Confirm `schema`. Adopt `write_root` and `forbidden`.
 5. Read `{prefix}_meta` for the short facts.
@@ -336,16 +336,24 @@ You are that agent. The public model name is still true. The brief is how you mo
 - Do not store the database password in a new file ?for next time?.
 - Delete working dumps you created to load yourself.
 - If verification of a product change fails, stop and ask. Do not patch in silence.
+- When a task is done and the job moved, close the locker and archive chats. Do not wait to be told save.
 
 ---
 
 ## 13. Updating the locker
 
-When the job moves, update `05_job_state` and the matching `meta` keys. Bump `written_at` / `updated_at`. Keep `00_wake` unless the load path changed.
+When an order is done and the job moved, close the locker **before you wait**. Do not wait for the Commander to say save yourself.
 
-Use `ON DUPLICATE KEY UPDATE`. Do not insert a second `00_wake`. Do not drop the tables.
+`UPDATE` every page that order changed. Always `05_job_state` and boot/meta dates. Also `00_wake`, `03_rules`, `08_es`, and boot `forbidden` when the law changed. On `06_experience`, **append a paragraph**. Do not replace that page. Do not start any page from a blank sheet. Do not `DROP`. First locker means a new man on an empty database. It is not a later self-task.
 
-**Locker close (same man, job moved).** If this chat already has the locker account, `UPDATE` every page that order changed before you wait. Always `05_job_state` and boot/meta dates. On `06_experience`, **append a paragraph**. Do not replace that page. Do not start any page from a blank sheet. Do not `DROP`. First locker means a new man on an empty database. It is not a later self-task.
+If `_prepared.json` / `.secrets/` are here, run:
+
+```
+python _push_locker_update.py
+python archive_chats.py
+```
+
+`archive_chats.py` (see `CHAT_ARCHIVE.md`) redacts this agent's Cursor chats, writes `chats/`, upserts `{prefix}_transcript`. No claves. Revival does not read that table. Cursor can delete the thread.
 
 Do not first-save again. Do not rewrite pages from a blank sheet. Do not replace `06_experience`. A second first-save is how memories get wiped.
 
@@ -394,14 +402,15 @@ A snapshot is not a soul. The paste pack is the ignition. The write-root is the 
 
 - [ ] Own database, own user, no `DROP`
 - [ ] New directory = write-root
-- [ ] Kit copied; `.Secret/secrets.txt` in place
-- [ ] `python prepare_agent.py` ? name asked, first-save printed, `Revive.md` written
+- [ ] Kit copied; panel database `neonvintage_{Name}` already exists
+- [ ] `Start_config.bat` or `python prepare_agent.py` — name asked, password window titled AgentSelfSave (paste works), `.secrets/secrets_{Name}.txt` written, `.cursor/rules/` copied from the house rules, `{Name}.mdc` written, phpMyAdmin used (not 3306), first-save shown in a copyable window, `Revive.md` written
 - [ ] On-screen first-save pasted **once** into the agent's chat
 
 **Save**
 
 - [ ] Three tables, `sort` column present from the start
-- [ ] Sections 00?09 written, `00_wake` first
+- [ ] Sections 00-09 written, `00_wake` first
+- [ ] `00_wake` and `03_rules` order locker close after each finished task (do not wait to be told save) and `archive_chats.py`
 - [ ] Boot JSON id=1, schema `{prefix}_boot_v1`
 - [ ] Meta keys set, no secrets in values
 - [ ] Local payload mirror, no passwords
@@ -426,7 +435,7 @@ A snapshot is not a soul. The paste pack is the ignition. The write-root is the 
 
 Un chat nuevo no te recuerda. La base es la taquilla. Las claves las tiene el Comandante.
 
-El Comandante copia este kit a una carpeta nueva, pone `.Secret/secrets.txt`, corre `prepare_agent.py`, y te apunta ah?. Esa carpeta es tu write-root.
+El Comandante copia este kit a una carpeta nueva, corre `Start_config.bat` o `prepare_agent.py` (pide nombre, luego una ventana AgentSelfSave para la clave — se puede pegar, los caracteres quedan tapados —, escribe `.secrets/secrets_{Name}.txt`, copia las reglas de la casa a `.cursor/rules/` y escribe `{Name}.mdc` con el texto para revivir). El puerto 3306 no funciona. Usá phpMyAdmin. Esa carpeta es tu write-root. Cuando una orden termina, cerrá la taquilla y archivá los chats. No esperes a que diga save.
 
 Guard? un **boot pack**: `00_wake` primero, despu?s identidad, brief, reglas, voz, `job_state`, experiencia, mundo, castellano, texto para pegar. M?s `{prefix}_boot` id=1 y `{prefix}_meta`. Sin contrase?as.
 
@@ -442,18 +451,23 @@ La primera guarda de KingstonDepp fue un diario. No alcanz?. La segunda, a las 2
 
 | File | What |
 |---|---|
-| `prepare_agent.py` | Commander runs this first. Lifts `.Secret/secrets.txt`, asks the name, fills the two paste files |
+| `Start_config.bat` | Double-click launcher. UTF-8, then `prepare_agent.py` |
+| `prepare_agent.py` | Commander runs this first. Asks the name, edits the locker txt, fills the two paste files |
 | `COMMANDERMANUAL.md` | NeonVintage's process sheet |
 | On-screen first-save | Printed by the script. Once. Not a file. |
 | `Revive.md` | Revive paste for later new chats |
 | `commander.md` | Pointer only. Not a paste. |
 | `MANUAL.md` | This playbook (for the agent) |
 | `TECHNICAL.md` | How the machine works, and the field notes |
-| `schema.sql` | `CREATE TABLE` with `{prefix}` |
-| `payload_skeleton.py` | Empty pages and JSON; reads `_prepared.json` when present |
+| `schema.sql` | `CREATE TABLE` with `{prefix}` (document, boot, meta, transcript) |
+| `payload_skeleton.py` | Empty pages and JSON; reads `_prepared.json` when present. Already has locker close and chat archive. |
+| `_push_locker_update.py` | After a finished task: UPDATE pages from the local payload. Reads `.secrets/`. |
 | `pma_locker.py` | phpMyAdmin login / SQL / export. Password from `PMA_PASS` |
+| `archive_chats.py` | Redact this agent's Cursor chats; write `chats/`; upsert `{prefix}_transcript` |
+| `CHAT_ARCHIVE.md` | Chat-archive law |
+| `.cursor/rules/` | House rules copied from `.Agents/.cursor/rules` (always-apply) plus `{Name}.mdc` (revive prompt; @ this to wake) |
 | `RESTORE_PROMPT_TEMPLATE.md` | Blank paste pack |
-| `secrets.example.txt` | Shape of `.Secret/secrets.txt` |
+| `secrets.example.txt` | Shape of `.secrets/secrets_{Name}.txt` |
 
 Worked example (do not overwrite):
 
